@@ -182,27 +182,29 @@ namespace VRage.Compiler
 
         private static IlReader m_reader = new IlReader();
 
-        public static Assembly InjectCodeToAssembly(string newAssemblyName, Assembly inputAssembly, MethodInfo method,MethodInfo methodToInjectMethodCheck, bool save = false)
+        public static Assembly InjectCodeToAssembly(string newAssemblyName, Assembly inputAssembly, MethodInfo method,MethodInfo methodToInjectMethodCheck/*, bool save = false*/)
         {
             AssemblyName assemblyName = new AssemblyName(newAssemblyName);
 
-            AssemblyBuilder newAssembly = Thread.GetDomain().DefineDynamicAssembly(assemblyName, save ? AssemblyBuilderAccess.RunAndSave : AssemblyBuilderAccess.Run);
+            AssemblyBuilder newAssembly = AssemblyBuilder.DefineDynamicAssembly(assemblyName, /*save ? AssemblyBuilderAccess.RunAndSave :*/ AssemblyBuilderAccess.Run);
 
             ModuleBuilder newModule;
-            if (save)
+            /*if (save)
             {
                 newModule = newAssembly.DefineDynamicModule(assemblyName.Name, assemblyName.Name + ".dll");
             }
-            else
+            else*/
             {
                 newModule = newAssembly.DefineDynamicModule(assemblyName.Name);
             }
 			InjectTypes(inputAssembly.GetTypes(), newModule, method, methodToInjectMethodCheck);
 
+            /*
             if (save)
             {
                 newAssembly.Save(assemblyName.Name + ".dll");
             }
+            */
 
             return newAssembly;
         }
@@ -278,7 +280,7 @@ namespace VRage.Compiler
                         InjectMethod(newConstructor.Value, newConstructor.Key.GetILGenerator(), createdFields, createdMethods, createdConstructors, createdTypes, methodToInject,methodToInjectMethodCheck, typeLookup);
                     }
                 }
-                type.Key.CreateType();
+                type.Key.CreateTypeInfo();
             }
         }
 
